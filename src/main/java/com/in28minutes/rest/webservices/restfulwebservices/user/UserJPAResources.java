@@ -1,5 +1,6 @@
 package com.in28minutes.rest.webservices.restfulwebservices.user;
 
+import com.in28minutes.rest.webservices.restfulwebservices.user.exception.PostNotFoundException;
 import com.in28minutes.rest.webservices.restfulwebservices.user.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
@@ -23,6 +24,9 @@ public class UserJPAResources {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private  PostRepository postRepository;
 
 
     @GetMapping("/jpa/users")
@@ -63,22 +67,45 @@ public class UserJPAResources {
 
     @GetMapping("/jpa/users/{id}/posts")
     public List<Post> retrievePosts(@PathVariable Integer id) {
-        return service.findAllPosts(id);
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (!optionalUser.isPresent()) {
+            throw new UserNotFoundException("id - " + id);
+        }
+
+        return optionalUser.get().getPosts();
     }
+
+
+
+
 
     @GetMapping("/jpa/users/{id}/posts/{postId}")
     public Post retrievePost(@PathVariable Integer id, @PathVariable Integer postId) {
-        return service.findOnePost(postId);
+        Optional<Post> optionalPost =  postRepository.findById(postId);
+
+        if (optionalPost.isEmpty()) {
+            throw new PostNotFoundException("id - " + postId);
+        }
+
+        return optionalPost.get();
     }
 
+
     @PostMapping("/jpa/users/{id}/posts")
-    public ResponseEntity createPost(@RequestBody Post post, @PathVariable Integer id) {
-        post.setUserId(id);
-        Post savedPost = service.savePost(post);
+    public ResponseEntity createPost(@PathVariable Integer id, @RequestBody Post post) {
+        Optional<User> optionalUser = userRepository.findById(id);
+        if (!optionalUser.isPresent()) {
+            throw new UserNotFoundException("id - " + id);
+        }
+
+        post.setUser(optionalUser.get());
+
+        postRepository.save(post);
+
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(savedPost.getId())
+                .buildAndExpand(post.getId())
                 .toUri();
 
         return ResponseEntity.created(location).build();

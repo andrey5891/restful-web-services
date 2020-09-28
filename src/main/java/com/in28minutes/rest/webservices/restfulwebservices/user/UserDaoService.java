@@ -64,7 +64,7 @@ public class UserDaoService {
         throw new UserNotFoundException("id - " + id);
     }
 
-    public List<Post> findAllPosts(Integer userId) {
+    /*public List<Post> findAllPosts(Integer userId) {
         List<Post> resultPosts = new ArrayList<>();
         for (Post post : posts) {
             if (post.getUserId().equals(userId)) {
@@ -75,7 +75,7 @@ public class UserDaoService {
             throw new NoOnePostFoundException("no posts for this user");
         }
         return posts;
-    }
+    }*/
 
     public Post savePost(Post post) {
         if (post.getId() == null) {

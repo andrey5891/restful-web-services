@@ -56,17 +56,17 @@ public class UserResource {
         return ResponseEntity.created(location).build();
     }
 
-    @GetMapping("/users/{id}/posts")
+    /*@GetMapping("/users/{id}/posts")
     public List<Post> retrievePosts(@PathVariable Integer id) {
         return service.findAllPosts(id);
-    }
+    }*/
 
     @GetMapping("/users/{id}/posts/{postId}")
     public Post retrievePost(@PathVariable Integer id, @PathVariable Integer postId) {
         return service.findOnePost(postId);
     }
 
-    @PostMapping("/users/{id}/posts")
+    /*@PostMapping("/users/{id}/posts")
     public ResponseEntity createPost(@RequestBody Post post, @PathVariable Integer id) {
         post.setUserId(id);
         Post savedPost = service.savePost(post);
@@ -77,5 +77,5 @@ public class UserResource {
                 .toUri();
 
         return ResponseEntity.created(location).build();
-    }
+    }*/
 }

@@ -1,16 +1,27 @@
 package com.in28minutes.rest.webservices.restfulwebservices.user;
 
-public class Post {
-    private Integer id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-    private Integer userId;
+import javax.persistence.*;
+
+@Entity
+public class Post {
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     private String text;
 
-    public Post(Integer id, Integer userId, String text) {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private User user;
+
+    public Post(Integer id, String text) {
         this.id = id;
-        this.userId = userId;
         this.text = text;
+    }
+
+    public Post() {
     }
 
     public Integer getId() {
@@ -21,12 +32,13 @@ public class Post {
         this.id = id;
     }
 
-    public Integer getUserId() {
-        return userId;
+
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public String getText() {
